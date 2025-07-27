@@ -26,7 +26,6 @@
     "release": "turbo build && changeset publish",
     "changelog:trigger": "npx tsx scripts/trigger-changelog-automation.ts",
     "format": "prettier --write .",
-    "test:agentic-core": "npm run test:agentic-core --workspace=packages/agentic-core",
     "postman:generate": "npm run postman:generate --workspace=packages/thegrid"
   },
   "devDependencies": {

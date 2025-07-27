@@ -188,9 +188,6 @@
         },
         "test:ui": {
             "cache": false
-        },
-        "test:agentic-core": {
-            "cache": false
         }
     }
 }

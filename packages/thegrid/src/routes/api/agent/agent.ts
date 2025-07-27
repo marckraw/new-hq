@@ -1,5 +1,6 @@
 import { logger, userLogger } from "@/utils/logger";
 import { OpenAPIHono } from "@hono/zod-openapi";
+import { createConfigurableAgent } from "@mrck-labs/grid-core";
 import { Hono } from "hono";
 import { streamSSE } from "hono/streaming";
 import { agentFactory } from "../../../agent/factories/agents.factory";
@@ -20,6 +21,50 @@ export const agentRouter = new OpenAPIHono();
 
 // Create regular Hono router for streaming endpoints
 const streamRouter = new Hono();
+
+agentRouter.get("/some-test", async (c) => {
+  const agent = createConfigurableAgent({
+    config: {
+      id: "autonomous-agent",
+      type: "general",
+      prompts: {
+        system:
+          "You are a helpful assistant that breaks down tasks into steps. You speak like a pirate.",
+      },
+      version: "1.0.0",
+      metadata: {
+        id: "autonomous-agent",
+        type: "general",
+        name: "Autonomous Demo Agent",
+        description: "Demonstrates autonomous flow capabilities",
+        capabilities: ["general"],
+        icon: "🤖",
+        version: "1.0.0",
+      },
+      tools: {
+        builtin: [],
+        custom: [],
+        mcp: [],
+        agents: [],
+      },
+      behavior: {
+        maxRetries: 3,
+        responseFormat: "text" as const,
+        validateResponse: false,
+        emitEvents: [],
+      },
+      orchestration: {},
+    },
+    // Use custom LLM service if selected
+    llmService: undefined,
+  });
+
+  const response = await agent.act({
+    messages: [{ role: "user", content: "Hello, world!" }],
+  });
+
+  return c.json(response);
+});
 
 // GET /available-agents
 agentRouter.openapi(getAvailableAgentsRoute, async (c) => {
